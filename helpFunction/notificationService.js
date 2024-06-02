@@ -5,7 +5,7 @@ const { response } = require('express');
 const handleNotification = async (email) => {
   try {
     const courier = new CourierClient({ 
-      authorizationToken: "pk_prod_2HYR75JZAT4NQ3JR8KE7AV66P7G4" 
+      authorizationToken: process.env.EMAIL_KEY
     });
 
     const requestId = await courier.send({
