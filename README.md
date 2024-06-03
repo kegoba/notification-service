@@ -5,6 +5,11 @@
 
 
 STEPS TO RUN THE APP.
+
+
+NOTICIATION TYPE => EMAIL NOFITICATION
+
+
 1 => git clone : https://github.com/kegoba/notification-service.git
 
 
@@ -16,7 +21,7 @@ STEPS TO RUN THE APP.
 
 const { DATABASE_URL } = process.env;
 
-4. => npm start
+4. => npm run dev
 
 
 5.  => register as a user //  check below for the api url

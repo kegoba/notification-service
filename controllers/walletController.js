@@ -78,6 +78,7 @@ const automaticDebitWallet = async (req, res) => {
         
       }
       const user = await User.findById(userId)
+      //console.log(user.email)
         await handleNotification(user.email);
         res.status(301).json({data : "Debit Failed", wallet})
   

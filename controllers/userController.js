@@ -47,7 +47,7 @@ res.status(400).json({message:"Invalid Input"})
       await bcrypt.compare(req.body.password, userInfo.password, (wrong, correct)=>{
         if (correct){
           // assign Token to user and save
-          const token = jwt.sign({ id: userInfo._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+          const token = jwt.sign({ id: userInfo._id, role:userInfo.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
           data = {
             token : token,
             name : userInfo.name,
@@ -89,6 +89,8 @@ const getSingleUser = async (req, res) => {
 
 //get all user
 const getAllUser = async (req, res) => {
+
+    console.log(req.user.role)
   try{
     const userInfo = await User.find()
 

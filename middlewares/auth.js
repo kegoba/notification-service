@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
+const { Message } = require('node-mailjet');
 require('dotenv').config();
 const { JWT_SECRET } = process.env;
 
-const auth = (req, res, next) => {
+const checkAuthentication = (req, res, next) => {
   const authHeader = req.header('Authorization');
   if (!authHeader) {
     return res.status(401).send('Access denied. No token provided.');
@@ -24,4 +25,19 @@ const auth = (req, res, next) => {
   }
 };
 
-module.exports=auth;
+
+
+const checkAuthorization = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({Message: 'Unauthorize Acessess, Admin route Only.'});
+  }
+
+  next();
+};
+
+
+
+
+module.exports = { checkAuthentication, checkAuthorization };
+
+

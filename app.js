@@ -27,6 +27,8 @@ app.use("/api/v1/wallet", require("./routes/walletRoute"));
 
 app.use("/api/v1/payment", require("./routes/paymentRoute"));
 
+app.use("/api/v1/admin", require("./routes/adminRoute"));
+
 
 
 

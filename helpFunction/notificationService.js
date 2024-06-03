@@ -1,6 +1,6 @@
-const Mailjet = require('node-mailjet');
+
 const { CourierClient } =  require("@trycourier/courier"); 
-const { response } = require('express');
+
 
 const handleNotification = async (email) => {
   try {
