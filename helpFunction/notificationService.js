@@ -2,7 +2,7 @@
 const { CourierClient } =  require("@trycourier/courier"); 
 
 
-const handleNotification = async (email) => {
+const handleNotification = async (email, amount) => {
   try {
     const courier = new CourierClient({ 
       authorizationToken: process.env.EMAIL_KEY
@@ -12,7 +12,7 @@ const handleNotification = async (email) => {
       message: {
         content: {
           title: "Failed Automatic Debit",
-          body: "Hello, kindly note that the automatic debit initiated in your account has failed. Please fund your account to enable us to conclude the action."
+          body: `Hello, kindly note that the automatic debit of ${amount} initiated in your account has failed. Please fund your account to enable us to conclude the action.`
         },
         to: {
           email: email

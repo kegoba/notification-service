@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { Message } = require('node-mailjet');
 require('dotenv').config();
 const { JWT_SECRET } = process.env;
 

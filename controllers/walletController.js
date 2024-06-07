@@ -91,10 +91,6 @@ const automaticDebitWallet = async (req, res) => {
 
 
 
-
-
-
-
   //Endpoint to trigger the automated bulk debits. Eg, debiting all the user wallet for a specific amount
 const  automaticBulkWalletDebit = async (req, res)=> {
   const {amount} = req.body
@@ -123,11 +119,12 @@ const  automaticBulkWalletDebit = async (req, res)=> {
     }
 
     if (failedDebits.length > 0) {
-        const emails = failedDebits.map((data) => data.user.email);
-        // Notify users of their failed transactions
-        const notificationPromises = emails.map(handleNotification);
-        await Promise.all(notificationPromises);
-        //console.log(emails);
+      const emails = failedDebits.map((data) => data.user.email);
+
+      // Notify users of their failed transactions
+      const notificationPromises = emails.map((email) => handleNotification(email, amount));
+      
+      await Promise.all(notificationPromises);
       }
 
   res.status(200).json({

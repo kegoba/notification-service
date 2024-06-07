@@ -13,12 +13,9 @@ route.post('/register',  UserController.registerUser)
 route.post('/login', UserController.loginUser) 
 
 
-route.get('/getallusers',checkAuthentication ,checkAuthorization, UserController.getAllUser) 
-
 route.get('/getsingleuser', checkAuthentication, UserController.getSingleUser)  
 
-
-route.delete('/deletealluser', checkAuthentication, UserController.deleteAllUser)   
+ 
 
 
 

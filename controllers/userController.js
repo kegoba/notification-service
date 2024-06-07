@@ -144,7 +144,7 @@ const deleteAllUser = async (req, res) => {
   try{
        await User.deleteMany({})
 
-    res.status(200).json({data:"all user delted"});
+    res.status(200).json({data:"all user deleted"});
 
   } catch(error){
     res.status(401).json({message: error.errors})

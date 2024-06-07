@@ -7,7 +7,7 @@ const registerAdmin = async (req, res) => {
       await user.save();
       res.status(201).json({ message: 'Admin registered successfully' });
     } catch (error) {
-      res.status(400).json({ error: 'Error registering admin' });
+      res.status(400).json({ error: error.message });
     }
   };
 
