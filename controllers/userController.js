@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+
+const Wallet = require('../models/walletModel');
+
+
 const { 
   emailValidation,
   passwordValidation,
@@ -27,6 +31,10 @@ const registerUser = async (req, res) => {
       });
       
       const data = await userInfo.save();
+      const wallet = new Wallet({
+        user : userInfo._id
+      })
+      wallet.save()
       res.status(200).json({data : "Registered Succesfully"});
     }
     catch(error){

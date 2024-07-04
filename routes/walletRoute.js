@@ -10,7 +10,7 @@ const Notifications = require("../helpFunction/notificationService")
 
 route.get('/balance', checkAuthentication, welletController.getWalletBalance) 
 route.post('/credit',checkAuthentication,  welletController.creditWallet)  
-route.post('/autodebit', welletController.automaticDebitWallet)  
+route.post('/autodebit', checkAuthentication ,welletController.automaticDebitWallet)  
 route.post('/autobulk', welletController.automaticBulkWalletDebit) //
 
 

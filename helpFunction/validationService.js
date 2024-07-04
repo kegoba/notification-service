@@ -24,7 +24,7 @@
 
   const  validateAmount = (amount)=> {
     const regex = /^\d+$/ ;
-    return regex.test(input);
+    return regex.test(amount) && amount > 100;
   }
 
 

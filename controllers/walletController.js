@@ -2,33 +2,18 @@ const mongoose = require('mongoose');
 const User = require('../models/userModel');
 const Wallet = require('../models/walletModel');
 const {handleNotification} = require("../helpFunction/notificationService")
+const {validateAmount} = require("../helpFunction/validationService")
 
 
-
-// Create a wallet for a user
-const createWallet = async (req, res) => {
-  const { userId } = req.body;
-  try {
-    const userInfo = await User.findById({_id : userId});
-    if (!userInfo) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const wallet = new Wallet({ user : userId });
-    await wallet.save();
-
-    res.status(201).json(wallet);
-  } catch (error) {
-    console.error('Error creating wallet:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
 
 // Get wallet balance
 const getWalletBalance = async (req, res) => {
-  const { userId } = req.body;
+  const { id } = req.user;
+  if(!id){
+    return  res.status(401).json({message : "Unauthorized access"})
+  }
   try {
-    const wallet = await Wallet.findOne({ user: userId });
+    const wallet = await Wallet.findOne({ user: id });
     if (!wallet) {
       return res.status(404).json({ message: 'Wallet not found' });
     }
@@ -42,9 +27,14 @@ const getWalletBalance = async (req, res) => {
 
 // Update wallet balance
 const creditWallet = async (req, res) => {
-  const { userId , amount } = req.body;
+ 
+  const { amount } = req.body;
+  if (!validateAmount(amount)) {
+
+    return res.status(400).json({message:"Invalid amount"})
+    }
   try {
-    const wallet = await Wallet.findOne({ user: userId });
+    const wallet = await Wallet.findOne({ user: req.user.id });
     if (!wallet) {
       return res.status(404).json({ message: 'Wallet not found' });
     }
@@ -63,26 +53,30 @@ const creditWallet = async (req, res) => {
   //Endpoint to trigger the automated bulk debits. Eg, debiting only one user wallet for a specific amount
 
 const automaticDebitWallet = async (req, res) => {
-    const { userId , amount } = req.body;
+    const { amount } = req.body;
+   
+    if(!validateAmount(amount)) {
+
+      return res.status(400).json({message:"Invalid amount"})
+      }
     try {
-      const wallet = await Wallet.findOne({ user: userId });
+      const wallet = await Wallet.findOne({ user:req.user.id });
       if (!wallet) {
         return res.status(404).json({ message: 'Wallet not found' });
       }
-      if(wallet.balance>=amount){
-        wallet.balance -= amount;
-        await wallet.save();
-    
-        res.status(200).json({data: wallet, message : "Debited Successfully"});
+      if(wallet.balance < amount){
         
-        
-      }
-      const user = await User.findById(userId)
-      //console.log(user.email)
+        const user = await User.findById(req.user.id)
         await handleNotification(user.email);
-        res.status(301).json({data : "Debit Failed", wallet})
-  
+        
+        return res.status(301).json({data : "Debit Failed Due to Low Balance"})
+      }
+     
+      wallet.balance -= amount;
+      await wallet.save();
+      return res.status(400).json({data: wallet, message : "Debited Successfully"});
 
+      
     } catch (error) {
       console.error('Error updating wallet balance:', error);
       res.status(500).json({ message: 'Server error' });
@@ -139,7 +133,6 @@ const  automaticBulkWalletDebit = async (req, res)=> {
 
 
 module.exports = {
-    createWallet,
     getWalletBalance,
     creditWallet,
     automaticBulkWalletDebit,
