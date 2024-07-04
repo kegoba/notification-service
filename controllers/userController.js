@@ -15,68 +15,39 @@ const {
 
 
 
-//register user or add Paitent
+const {
+  loginService,
+  registerService,
+  getAllUserService,
+  getSingleService
+}=require( "../services/userService")
+
+
+
 const registerUser = async (req, res) => {
-  if (!inputValidation(req.body.name) || !emailValidation(req.body.email)  ||
-        !phoneValidation(req.body.phone) || !passwordValidation(req.body.password)) {
-     
-          res.status(400).json({message:"Invalid Input"})
+  try {
+    const data = req.body;
+    const response = await registerService(data); 
+
+    if (response.success) {
+      res.status(200).json({ msg: "registration Succussful" });
+    } else {
+      res.status(400).json({ msg: response.message });
     }
-    try {
-      const userInfo = new User({
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
-        password: req.body.password
-      });
-      
-      const data = await userInfo.save();
-      const wallet = new Wallet({
-        user : userInfo._id
-      })
-      wallet.save()
-      res.status(200).json({data : "Registered Succesfully"});
-    }
-    catch(error){
-      res.status(400).json({data : error.message})
-    }
- 
+  } catch (error) {
+    res.status(500).json({ msg: "Internal Server Error", error: error.message });
   }
+};
+
   
 //Login User
 const loginUser = async (req, res) => {
-  if (!emailValidation(req.body.email) || !passwordValidation(req.body.password)) {
-
-res.status(400).json({message:"Invalid Input"})
-}
+  const { email, password } = req.body;
   try {
-    const userInfo = await User.findOne({ email: req.body.email });
-    if (userInfo) {
-      await bcrypt.compare(req.body.password, userInfo.password, (wrong, correct)=>{
-        if (correct){
-          // assign Token to user and save
-          const token = jwt.sign({ id: userInfo._id, role:userInfo.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
-          data = {
-            token : token,
-            name : userInfo.name,
-            email : userInfo.email,
-            phone : userInfo.phone,
-            id : userInfo._id,
-          }
-            res.status(200).json({data : data});
-
-        }else {
-          res.status(400).json({ data :  'Invalid Password or Email '});
-        }
-      })
-      
-    }else{
-      res.status(401).json({ data :  'Invalid Password'});
-    }
-
-  }catch(error){
-    res.status(400).json({ data :  error});
-
+    const response = await loginService(email, password);
+    return res.json({ response });
+  } catch (err) {
+    res.status(400).json({ msg: err.message });
   }
   
 };
